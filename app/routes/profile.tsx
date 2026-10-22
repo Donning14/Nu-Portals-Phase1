@@ -1,0 +1,1 @@
+import {Protected} from '../components/Protected';export default function Profile(){return <Protected title="My profile"><p>Profile details are retrieved from the protected <code>/api/me</code> endpoint. Editing is planned for the next milestone.</p></Protected>}

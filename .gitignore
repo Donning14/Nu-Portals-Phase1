@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+build/
+.react-router/
+.wrangler/
+playwright-report/
+test-results/
+coverage/
+.DS_Store

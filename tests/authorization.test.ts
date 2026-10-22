@@ -1,0 +1,3 @@
+import {describe,it,expect} from 'vitest';import {canInvite,onboardingSchema} from '../shared/validation';
+describe('organization-scoped invitation permission',()=>{it('denies customer and employee',()=>{expect(canInvite(['customer'])).toBe(false);expect(canInvite(['employee'])).toBe(false)});it('allows organization administrator',()=>expect(canInvite(['organization_admin'])).toBe(true));it('allows platform administrator',()=>expect(canInvite([],true)).toBe(true))});
+describe('onboarding validation',()=>{it('rejects missing business details',()=>expect(onboardingSchema.safeParse({organizationName:'Test'}).success).toBe(false))});

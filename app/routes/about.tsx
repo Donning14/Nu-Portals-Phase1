@@ -1,0 +1,1 @@
+import {Page} from '../components/Shell';export default function About(){return <Page title="About Nu-Portals"><p>We partner with organizations to transform promising AI ideas into practical, supported business solutions.</p><p>Our approach connects discovery, responsible engineering, integration, deployment, and long-term operational support.</p></Page>}

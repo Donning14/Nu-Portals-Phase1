@@ -1,0 +1,1 @@
+import {SignUp} from '@clerk/clerk-react';import {Page} from '../components/Shell';export default function SignUpPage(){return <Page title="Create your account"><SignUp routing="hash" forceRedirectUrl="/app/onboarding"/></Page>}
