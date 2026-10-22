@@ -1,6 +1,6 @@
 {
  "$schema":"node_modules/wrangler/config-schema.json",
- "name":"nu-portals-platform","main":"worker/index.ts","compatibility_date":"2026-10-20","compatibility_flags":["nodejs_compat"],
+ "name": "u--ortals--ebsite","main":"worker/index.ts","compatibility_date":"2026-10-20","compatibility_flags":["nodejs_compat"],
  "routes":[{"pattern":"nu-portals.com","custom_domain":true}],
  "vars":{"APP_ENV":"production","CLERK_PUBLISHABLE_KEY":"REPLACE_ME","APP_ORIGIN":"https://nu-portals.com"},
  "observability":{"enabled":true},
