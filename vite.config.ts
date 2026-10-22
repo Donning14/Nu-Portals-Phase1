@@ -4,5 +4,9 @@ import { cloudflare } from '@cloudflare/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [reactRouter(), cloudflare(), tailwindcss()],
+  plugins: [
+    reactRouter(),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tailwindcss(),
+  ],
 });
