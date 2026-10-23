@@ -39,6 +39,6 @@ export default function handleRequest(
         },
       }
     );
-    setTimeout(abort, 5000);
+    setTimeout(abort, 4000);
   });
 }
