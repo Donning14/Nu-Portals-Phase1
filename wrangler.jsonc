@@ -12,7 +12,7 @@
   ],
   "vars": {
     "APP_ENV": "production",
-    "CLERK_PUBLISHABLE_KEY": "pk_test_Z2xvcmlvdXMtcmFjY29vbi01MzAyLmNsZXJrLmFjY291bnRzLmRldiQ",
+    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20kCLERK_SECRET_KEY=sk_live_j4jVBJIj8nvqHDnixrn3oTWKsUEmmTwTXZub2XLrMN",
     "APP_ORIGIN": "https://nu-portals.com"
   },
   "observability": { "enabled": true },
