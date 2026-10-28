@@ -4,8 +4,11 @@ import { reactRouter } from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+  build: {
+    emptyOutDir: false,
+  },
   plugins: [
-    cloudflare(),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
     reactRouter(),
     tailwindcss(),
   ],
