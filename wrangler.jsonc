@@ -12,7 +12,7 @@
   ],
   "vars": {
     "APP_ENV": "production",
-    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20kCLERK_SECRET_KEY=sk_live_j4jVBJIj8nvqHDnixrn3oTWKsUEmmTwTXZub2XLrMN",
+    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20k",
     "APP_ORIGIN": "https://nu-portals.com"
   },
   "observability": { "enabled": true },
@@ -21,7 +21,7 @@
       "name": "nu-portals-staging",
       "vars": {
         "APP_ENV": "staging",
-        "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20kCLERK_SECRET_KEY=sk_live_j4jVBJIj8nvqHDnixrn3oTWKsUEmmTwTXZub2XLrMN",
+        "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20k",
         "APP_ORIGIN": "https://staging.nu-portals.com"
       }
     }
