@@ -12,3 +12,12 @@ export function ErrorBoundary() {
     // ... your existing error UI
   );
 }
+function Root() {
+  return (
+    <div className="notice">
+      Authentication is not configured. Set VITE_CLERK_PUBLISHABLE_KEY to enable login.
+    </div>
+    <Outlet />
+  );
+}
+// ⚠️ No ErrorBoundary export — errors are swallowed
