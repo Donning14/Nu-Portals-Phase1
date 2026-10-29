@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nu-portals-platform",
+  "name": "u--ortals--ebsite",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-20",
   "compatibility_flags": [ "nodejs_compat" ],
