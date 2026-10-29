@@ -28,9 +28,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function Root() {
   return (
     <>
-      <div className="notice">
-        Authentication is not configured. Set VITE_CLERK_PUBLISHABLE_KEY to enable login.
-      </div>
       <Outlet />
     </>
   );
