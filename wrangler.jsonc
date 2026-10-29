@@ -11,10 +11,10 @@
     }
   ],
   "vars": {
-    "APP_ENV": "production",
-    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20k",
-    "APP_ORIGIN": "https://nu-portals.com"
-  },
+  "APP_ENV": "production",
+  "APP_ORIGIN": "https://nu-portals.com",
+  "VITE_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubnUtcG9ydGFscy5jb20k"
+},
   "observability": { "enabled": true },
   "env": {
     "staging": {
