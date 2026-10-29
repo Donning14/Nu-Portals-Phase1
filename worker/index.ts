@@ -11,8 +11,19 @@ export default {
     if (new URL(request.url).pathname.startsWith("/api/")) {
       return api.fetch(request, env, ctx);
     }
-    return requestHandler(request, {
-      cloudflare: { env, ctx },
-    });
+    try {
+      const response = await requestHandler(request, {
+        cloudflare: { env, ctx },
+      });
+      if (!response.ok) {
+        console.error("SSR FAILED:", response.status, request.url);
+        const body = await response.clone().text();
+        console.error("SSR BODY:", body.substring(0, 1000));
+      }
+      return response;
+    } catch (error) {
+      console.error("WORKER ERROR:", error?.message || String(error), error?.stack);
+      throw error;
+    }
   },
 } satisfies ExportedHandler<Env>;
