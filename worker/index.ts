@@ -15,7 +15,7 @@ export default {
     (context as any).cloudflare = { env, ctx };
     try {
       const response = await requestHandler(request, context);
-      if (!response.ok) {
+      if (!response.ok && response.status >= 500) {
         console.error("SSR FAILED:", response.status, request.url);
         const body = await response.clone().text();
         console.error("SSR BODY:", body.substring(0, 1000));
