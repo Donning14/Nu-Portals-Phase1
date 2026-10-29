@@ -1,13 +1,15 @@
-import {createRequestHandler} from 'react-router';
-import {api} from '../server/api';
-import * as build from 'virtual:react-router/server-build';
-const handler=createRequestHandler(build,'production');
-export default {async fetch(request:Request,env:any,ctx:ExecutionContext){const url=new URL(request.url);if(url.pathname.startsWith('/api/'))return api.fetch(request,env,ctx);return handler(request,{cloudflare:{env,ctx}})}};
-var handler = createRequestHandler(server_build_exports, "production");
+import { createRequestHandler } from "react-router";
+// @ts-ignore
+import * as build from "../build/server/index.js";
+import { api } from "../server/api";
+
+const handler = createRequestHandler(build, "production");
+
 export default {
   async fetch(request, env, ctx) {
-    if (new URL(request.url).pathname.startsWith("/api/")) 
-      return api.fetch(request, env, ctx);  // → Hono API routes
-    return handler(request, { cloudflare: { env, ctx } });  // → React Router SSR
-  }
-};
+    if (new URL(request.url).pathname.startsWith("/api/")) {
+      return api.fetch(request, env, ctx);
+    }
+    return handler(request, { cloudflare: { env, ctx } });
+  },
+} satisfies ExportedHandler<Env>;
