@@ -6,6 +6,11 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "react-router";
+import stylesheet from "./styles.css?url";
+
+export function links() {
+  return [{ rel: "stylesheet", href: stylesheet }];
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
