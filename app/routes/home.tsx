@@ -14,9 +14,12 @@ export default function Home() {
   return (
     <Shell>
       <section className="hero">
-        <div className="container">
+        <div className="container hero-inner">
           <p className="eyebrow">Intelligent automation. Real business outcomes.</p>
-          <h1>From AI idea to lasting business impact.</h1>
+          <h1>
+            <span className="hero-accent">From AI idea</span>
+            <span className="hero-title">to lasting business impact.</span>
+          </h1>
           <p className="hero-lead">
             We help organizations discover opportunities, design and build AI agents, deploy them into real
             workflows, and support them long after launch.

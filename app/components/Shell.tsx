@@ -1,21 +1,31 @@
 import { Link } from 'react-router';
 import type { ReactNode } from 'react';
+import { HeaderAuth } from './HeaderAuth';
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
     <>
       <header className="header">
-        <nav className="container nav">
-          <Link to="/" aria-label="Nu-Portals home">
-            <img className="logo" src="/logo.svg" alt="Nu-Portals" />
-          </Link>
-          <div className="navlinks">
+        <div className="header-top">
+          <div className="container header-top-inner">
+            <Link to="/" aria-label="Nu-Portals home">
+              <img className="logo" src="/logo.svg" alt="Nu-Portals" />
+            </Link>
+            <div className="header-actions">
+              <Link className="btn nav-cta" to="/contact">
+                Start a conversation
+              </Link>
+              <HeaderAuth />
+            </div>
+          </div>
+        </div>
+        <nav className="header-nav" aria-label="Site">
+          <div className="container navlinks">
             <Link to="/">Home</Link>
             <Link to="/about">About</Link>
             <Link to="/services">Services</Link>
             <Link to="/contact">Contact</Link>
             <Link to="/communication-preferences">Preferences</Link>
-            <Link to="/app">Portal</Link>
           </div>
         </nav>
       </header>
