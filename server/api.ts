@@ -165,5 +165,3 @@ api.post('/invitations', async c => {
   await sql`INSERT INTO audit_logs(organization_id, actor_user_id, action, resource_type, resource_id) VALUES(${d.organizationId}, ${u.id}, 'invitation.created', 'invitation', ${rows[0].id})`;
   return c.json({ ...rows[0], delivery: 'not_configured' }, 201);
 });
-
-Select-String -Path server\api.ts -Pattern "clerk-webhook"
