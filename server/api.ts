@@ -33,6 +33,72 @@ api.onError((err, c) => {
 
 api.get('/health', c => c.json({ status: 'ok' }));
 
+api.get('/health', c => c.json({ status: 'ok' }));
+
+// ─── Clerk webhook: auto-assign default role on signup ──────────────────────
+// MUST be registered BEFORE the api.use('*', ...) auth middleware
+api.post('/clerk-webhook', async (c) => {
+  // Verify Svix signature
+  const svixId = c.req.header('svix-id');
+  const svixTimestamp = c.req.header('svix-timestamp');
+  const svixSignature = c.req.header('svix-signature');
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    return c.json({ error: 'Missing Svix headers' }, 400);
+  }
+
+  const body = await c.req.text();
+  const signedPayload = `${svixId}.${svixTimestamp}.${body}`;
+  const encoder = new TextEncoder();
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(c.env.CLERK_WEBHOOK_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+
+  const sigs = svixSignature.split(' ').map((s) => s.replace('v1,', ''));
+  let payload = null;
+  for (const sig of sigs) {
+    const signatureBytes = Uint8Array.from(atob(sig), (ch) => ch.charCodeAt(0));
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      signatureBytes,
+      encoder.encode(signedPayload)
+    );
+    if (valid) {
+      payload = JSON.parse(body);
+      break;
+    }
+  }
+  if (!payload) return c.json({ error: 'Invalid webhook signature' }, 401);
+
+  // Auto-assign default role on user.created
+  if (payload.type === 'user.created') {
+    const userId = payload.data.id;
+    const clerk = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY });
+    const user = await clerk.users.getUser(userId);
+    if (!user.privateMetadata?.role) {
+      await clerk.users.updateUser(userId, {
+        privateMetadata: { role: 'user' },
+      });
+      console.log(`Assigned default role "user" to user ${userId}`);
+    }
+  }
+
+  return c.json({ ok: true }, 200);
+});
+
+// ─── Auth middleware (existing code stays below) ──────────────────────────────
+api.use('*', async (c, next) => {
+  const bearer = c.req.header('authorization') || '';
+  if (!bearer.startsWith('Bearer ')) return c.json({ error: 'Authentication required' }, 401);
+  // ... rest of existing auth middleware
+});
+
+
 api.use('*', async (c, next) => {
   const bearer = c.req.header('authorization') || '';
   if (!bearer.startsWith('Bearer ')) return c.json({ error: 'Authentication required' }, 401);
