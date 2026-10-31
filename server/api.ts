@@ -7,6 +7,7 @@ type Env = {
   DATABASE_URL: string;
   CLERK_SECRET_KEY: string;
   CLERK_PUBLISHABLE_KEY: string;
+  CLERK_WEBHOOK_SECRET: string;
   APP_ORIGIN: string;
 };
 
@@ -33,12 +34,8 @@ api.onError((err, c) => {
 
 api.get('/health', c => c.json({ status: 'ok' }));
 
-api.get('/health', c => c.json({ status: 'ok' }));
-
 // ─── Clerk webhook: auto-assign default role on signup ──────────────────────
-// MUST be registered BEFORE the api.use('*', ...) auth middleware
 api.post('/clerk-webhook', async (c) => {
-  // Verify Svix signature
   const svixId = c.req.header('svix-id');
   const svixTimestamp = c.req.header('svix-timestamp');
   const svixSignature = c.req.header('svix-signature');
@@ -75,7 +72,6 @@ api.post('/clerk-webhook', async (c) => {
   }
   if (!payload) return c.json({ error: 'Invalid webhook signature' }, 401);
 
-  // Auto-assign default role on user.created
   if (payload.type === 'user.created') {
     const userId = payload.data.id;
     const clerk = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY });
@@ -91,15 +87,13 @@ api.post('/clerk-webhook', async (c) => {
   return c.json({ ok: true }, 200);
 });
 
-// ─── Auth middleware (existing code stays below) ──────────────────────────────
+// ─── Auth middleware ──────────────────────────────────────────────────────────
 api.use('*', async (c, next) => {
-  const bearer = c.req.header('authorization') || '';
-  if (!bearer.startsWith('Bearer ')) return c.json({ error: 'Authentication required' }, 401);
-  // ... rest of existing auth middleware
-});
+  // Skip auth for webhook and health endpoints
+  if (c.req.path === '/clerk-webhook' || c.req.path === '/health') {
+    return next();
+  }
 
-
-api.use('*', async (c, next) => {
   const bearer = c.req.header('authorization') || '';
   if (!bearer.startsWith('Bearer ')) return c.json({ error: 'Authentication required' }, 401);
   try {
