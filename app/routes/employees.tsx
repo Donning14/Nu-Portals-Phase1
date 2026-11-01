@@ -1,10 +1,5 @@
-import {useState} from 'react';import {useAuth} from '@clerk/clerk-react';import {Protected,apiFetch} from '../components/Protected';
-import { canAccess } from "../shared/permissions";
 import type { Route } from "./+types/employees";
 import { requireRole } from "../shared/auth";
-
-
-export default function Employees(){const {getToken}=useAuth();const [message,setMessage]=useState('');async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const fd=new FormData(e.currentTarget);setMessage('');try{const result=await apiFetch('/api/invitations',getToken,{method:'POST',body:JSON.stringify(Object.fromEntries(fd))});setMessage('Invitation recorded: '+result.id+'. Delivery requires Clerk invitation integration configuration.')}catch(e){setMessage((e as Error).message)}}return <Protected title="Invite an employee"><p>Only organization administrators or Nu-Portals platform administrators can invite employees. The API enforces this rule.</p><form className="form" onSubmit={submit}><label>Organization ID<input name="organizationId" required placeholder="Organization UUID"/></label><label>Employee email<input name="email" type="email" required/></label><button className="btn">Create invitation record</button></form><p role="status">{message}</p></Protected>}
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { role, userId } = await requireRole(request, context);
@@ -12,11 +7,39 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export default function Employees({ loaderData }: Route.ComponentProps) {
-  return <div>Employees — Role: {loaderData.role}</div>;
-}
-  if (!canAccess(role, new URL(request.url).pathname)) {
-    throw new Response("Forbidden", { status: 403 });
-  }
+  const { role, userId } = loaderData;
 
-  return {};
-}
+  return (
+    <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
+      <h1>Employees</h1>
+      <p style={{ color: "#666" }}>
+        Signed in as <strong>{role}</strong>
+      </p>
+
+      <div style={{ marginTop: "2rem" }}>
+        <h2>Employee Directory</h2>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #ddd", textAlign: "left" }}>
+              <th style={{ padding: "0.75rem" }}>Name</th>
+              <th style={{ padding: "0.75rem" }}>Email</th>
+              <th style={{ padding: "0.75rem" }}>Role</th>
+              <th style={{ padding: "0.75rem" }}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ padding: "0.75rem" }}>John Doe</td>
+              <td style={{ padding: "0.75rem" }}>john@example.com</td>
+              <td style={{ padding: "0.75rem" }}>Employee</td>
+              <td style={{ padding: "0.75rem" }}>Active</td>
+            </tr>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ padding: "0.75rem" }}>Jane Smith</td>
+              <td style={{ padding: "0.75rem" }}>jane@example.com</td>
+              <td style={{ padding: "0.75rem" }}>Employee</td>
+              <td style={{ padding: "0.75rem" }}>Active</td>
+            </tr>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ padding: "0.75rem" }}>Bob Johnson</td>
+              <td style={{ padding: "0.75rem" }}>bob@exa
