@@ -10,13 +10,7 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url);
     const path = url.pathname;
-
-    // Minimal webhook test — just return 200 OK
-    if (path === "/api/clerk-webhook" && request.method === "POST") {
-      console.log("WEBHOOK HIT — returning 200 OK");
-      return new Response("OK", { status: 200 });
-    }
-
+    
     // Everything else — original behavior
     if (path.startsWith("/api/")) {
       return api.fetch(request, env, ctx);
