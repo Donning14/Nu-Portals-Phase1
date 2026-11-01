@@ -72,15 +72,20 @@ api.post('/clerk-webhook', async (c) => {
   }
   if (!payload) return c.json({ error: 'Invalid webhook signature' }, 401);
 
-  if (payload.type === 'user.created') {
+    if (payload.type === 'user.created') {
     const userId = payload.data.id;
-    const clerk = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY });
-    const user = await clerk.users.getUser(userId);
-    if (!user.privateMetadata?.role) {
-      await clerk.users.updateUser(userId, {
-        privateMetadata: { role: 'user' },
-      });
-      console.log(`Assigned default role "user" to user ${userId}`);
+    try {
+      const clerk = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY });
+      const user = await clerk.users.getUser(userId);
+      if (!user.privateMetadata?.role) {
+        await clerk.users.updateUser(userId, {
+          privateMetadata: { role: 'user' },
+        });
+        console.log(`Assigned default role "user" to user ${userId}`);
+      }
+    } catch (err) {
+      console.error(`Failed to process user ${userId}:`, err?.message || err);
+      // Still return 200 to acknowledge receipt — Clerk will not retry
     }
   }
 
