@@ -10,8 +10,7 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url);
     const path = url.pathname;
-    
-    // Everything else — original behavior
+
     if (path.startsWith("/api/")) {
       return api.fetch(request, env, ctx);
     }
