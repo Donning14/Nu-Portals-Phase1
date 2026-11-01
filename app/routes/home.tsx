@@ -1,5 +1,7 @@
 import { Link } from 'react-router';
 import { Shell } from '../components/Shell';
+import type { Route } from "./+types/home";
+import { requireRole } from "../shared/auth";
 
 const steps = [
   ['01', 'Ideation', 'Identify valuable AI opportunities'],
@@ -10,6 +12,14 @@ const steps = [
   ['06', 'Optimization', 'Improve reliability and results'],
 ] as const;
 
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const { role, userId } = await requireRole(request, context);
+  return { role, userId };
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
+  return <div>Home — Role: {loaderData.role}</div>;
+}
 export default function Home() {
   return (
     <Shell>
