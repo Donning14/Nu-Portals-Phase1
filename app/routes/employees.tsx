@@ -1,5 +1,5 @@
 import type { Route } from "./+types/employees";
-import { requireRole } from "../shared/auth";
+import { requireRole } from "../../shared/auth";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { role, userId } = await requireRole(request, context);
@@ -42,4 +42,13 @@ export default function Employees({ loaderData }: Route.ComponentProps) {
             </tr>
             <tr style={{ borderBottom: "1px solid #eee" }}>
               <td style={{ padding: "0.75rem" }}>Bob Johnson</td>
-              <td style={{ padding: "0.75rem" }}>bob@exa
+              <td style={{ padding: "0.75rem" }}>bob@example.com</td>
+              <td style={{ padding: "0.75rem" }}>Employee</td>
+              <td style={{ padding: "0.75rem" }}>Active</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

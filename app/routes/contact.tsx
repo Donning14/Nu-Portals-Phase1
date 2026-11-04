@@ -1,5 +1,5 @@
 import type { Route } from "./+types/contact";
-import { requireRole } from "../shared/auth";
+import { requireRole } from "../../shared/auth";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { role, userId } = await requireRole(request, context);
