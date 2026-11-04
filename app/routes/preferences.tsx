@@ -1,24 +1,10 @@
-import type { Route } from "./+types/preferences";
-import { requireRole } from "../../shared/auth";
+import { Page } from '../components/Shell';
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const { role, userId } = await requireRole(request, context);
-  return { role, userId };
-}
-
-export default function Preferences({ loaderData }: Route.ComponentProps) {
-  const { role } = loaderData;
-
+export default function Preferences() {
   return (
-    <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
-      <h1>Preferences</h1>
-      <p style={{ color: "#666" }}>
-        Signed in as <strong>{role}</strong>
-      </p>
-      <div style={{ marginTop: "2rem" }}>
-        <h2>Your Preferences</h2>
-        <p>This page is accessible to all roles: executive, employee, customer, and user.</p>
-      </div>
-    </div>
+    <Page title="Communication preferences">
+      <p>Email, SMS, and phone preferences will be independently stored in PostgreSQL with a consent event history. This page does not collect or update consent yet.</p>
+      <p>Contact preferences will require a secure account session or another authorized workflow before activation.</p>
+    </Page>
   );
 }
