@@ -1,3 +1,60 @@
-import {describe,it,expect} from 'vitest';import {canInvite,onboardingSchema} from '../shared/validation';
+import {describe,it,expect} from 'vitest';import {canInvite,onboardingSchema} from '../shared/validation';import {canAccess} from '../shared/permissions';import {authorize,type Resource,type Subject} from '../shared/access';
 describe('organization-scoped invitation permission',()=>{it('denies customer and employee',()=>{expect(canInvite(['customer'])).toBe(false);expect(canInvite(['employee'])).toBe(false)});it('allows organization administrator',()=>expect(canInvite(['organization_admin'])).toBe(true));it('allows platform administrator',()=>expect(canInvite([],true)).toBe(true))});
 describe('onboarding validation',()=>{it('rejects missing business details',()=>expect(onboardingSchema.safeParse({organizationName:'Test'}).success).toBe(false))});
+describe('portal page authorization',()=>{it('lets a signed-in customer open engagement pages',()=>{expect(canAccess('customer','/app/quotes/new')).toBe(true);expect(canAccess('user','/app/requests/req-1')).toBe(true);expect(canAccess('employee','/app/projects/prj-1')).toBe(true);expect(canAccess('customer','/app/agreements/agr-1')).toBe(true)});it('keeps internal administration away from customer roles',()=>{expect(canAccess('customer','/app/admin/requests')).toBe(false);expect(canAccess('user','/app/admin/customers')).toBe(false);expect(canAccess('employee','/app/admin/requests')).toBe(false);expect(canAccess('executive','/app/admin/customers')).toBe(true)})});
+describe('engagement API validation',()=>{it('rejects an inquiry honeypot and an empty profile patch',async()=>{const {inquirySchema,profilePatchSchema,quoteRequestPatchSchema}=await import('../shared/validation');expect(inquirySchema.safeParse({topic:'Services',message:'I want to learn about automation for my business.',contactPreference:'email',contactName:'Ada',contactEmail:'ada@example.com',websiteConfirm:'http://spam.example'}).success).toBe(false);expect(profilePatchSchema.safeParse({}).success).toBe(false);expect(quoteRequestPatchSchema.safeParse({status:'accepted',title:'changed'}).success).toBe(false)})});
+const customer: Subject = { isPlatformAdmin: false, isInternalAdmin: false, isInternalManager: false, isInternalEmployee: false };
+const employee: Subject = { ...customer, isInternalEmployee: true };
+const manager: Subject = { ...customer, isInternalManager: true };
+const admin: Subject = { ...customer, isPlatformAdmin: true, isInternalAdmin: true };
+const org = (flags: Partial<Resource> = {}): Resource => ({ organizationIsActive: true, organizationIsInternal: false, customerOfOrg: false, permittedOnOrg: false, employeeAssigned: false, managerAuthorized: false, ...flags });
+describe('protected operation matrix', () => {
+  it('lets a customer act only inside their own organization', () => {
+    const own = org({ customerOfOrg: true });
+    expect(authorize('create_quote_request', customer, own).ok).toBe(true);
+    expect(authorize('view_request', customer, own).ok).toBe(true);
+    expect(authorize('view_project', customer, own).ok).toBe(true);
+    expect(authorize('edit_project', customer, own, ['description']).ok).toBe(false);
+    expect(authorize('upload_agreement', customer, own).ok).toBe(false);
+    expect(authorize('verify_agreement', customer, own).ok).toBe(false);
+    expect(authorize('convert_customer', customer, own).ok).toBe(false);
+  });
+  it('limits an employee to assigned work and assigned fields', () => {
+    const assigned = org({ employeeAssigned: true });
+    const unassigned = org();
+    expect(authorize('view_request', employee, assigned).ok).toBe(true);
+    expect(authorize('view_request', employee, unassigned).ok).toBe(false);
+    expect(authorize('view_project', employee, assigned).ok).toBe(true);
+    expect(authorize('view_project', employee, unassigned).ok).toBe(false);
+    expect(authorize('edit_project', employee, assigned, ['description']).ok).toBe(true);
+    expect(authorize('edit_project', employee, assigned, ['status']).ok).toBe(false);
+    expect(authorize('update_request', employee, assigned, ['assignedPmUserId']).ok).toBe(false);
+    expect(authorize('upload_agreement', employee, assigned).ok).toBe(false);
+    expect(authorize('verify_agreement', employee, assigned).ok).toBe(false);
+  });
+  it('lets a project manager act on authorized work but not assign or verify', () => {
+    const authorized = org({ managerAuthorized: true });
+    expect(authorize('view_request', manager, authorized).ok).toBe(true);
+    expect(authorize('view_project', manager, authorized).ok).toBe(true);
+    expect(authorize('view_project', manager, org()).ok).toBe(false);
+    expect(authorize('edit_project', manager, authorized, ['status', 'scopeOfWork']).ok).toBe(true);
+    expect(authorize('edit_project', manager, authorized, ['projectManagerUserId']).ok).toBe(false);
+    expect(authorize('update_request', manager, authorized, ['assignedPmUserId']).ok).toBe(false);
+    expect(authorize('upload_agreement', manager, authorized).ok).toBe(true);
+    expect(authorize('upload_agreement', manager, org()).ok).toBe(false);
+    expect(authorize('verify_agreement', manager, authorized).ok).toBe(false);
+    expect(authorize('convert_customer', manager, authorized).ok).toBe(false);
+  });
+  it('lets a Nu-Portals admin manage the customer portfolio', () => {
+    const portfolio = org();
+    expect(authorize('create_quote_request', admin, portfolio).ok).toBe(true);
+    expect(authorize('view_request', admin, portfolio).ok).toBe(true);
+    expect(authorize('update_request', admin, portfolio, ['assignedPmUserId']).ok).toBe(true);
+    expect(authorize('view_project', admin, portfolio).ok).toBe(true);
+    expect(authorize('edit_project', admin, portfolio, ['projectManagerUserId', 'status']).ok).toBe(true);
+    expect(authorize('upload_agreement', admin, portfolio).ok).toBe(true);
+    expect(authorize('verify_agreement', admin, portfolio).ok).toBe(true);
+    expect(authorize('convert_customer', admin, portfolio).ok).toBe(true);
+    expect(authorize('view_request', admin, org({ organizationIsInternal: true })).ok).toBe(false);
+  });
+});

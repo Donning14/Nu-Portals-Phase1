@@ -295,11 +295,27 @@ a:hover {
   font-weight: 600;
 }
 
-.form input {
+.form input,
+.form select,
+.form textarea {
   border: 1px solid #9fb4c7;
   border-radius: 8px;
   padding: 12px;
   background: white;
+  font: inherit;
+}
+
+.form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0 0 28px;
+  max-width: none;
 }
 
 .form button {

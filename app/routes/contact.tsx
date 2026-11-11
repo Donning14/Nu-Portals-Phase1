@@ -5,6 +5,7 @@ export default function Contact() {
     <Page title="Contact Nu-Portals">
       <p>Tell us about your AI automation goals. A verified business contact address and working inquiry endpoint must be configured before accepting submissions.</p>
       <p>Contact form integration is planned for the next iteration; no message is sent from this placeholder.</p>
+      <p><a href="/contact/learn-more">Learn more about a service</a></p>
     </Page>
   );
 }
